@@ -1,0 +1,31 @@
+# Exclude appsettings.json and environment-specific settings
+appsettings.json
+appsettings.*.json
+
+# Ignore build outputs
+bin/
+obj/
+
+# Ignore user-specific files
+*.user
+*.userosscache
+*.suo
+*.vs/
+
+# Ignore packages and dependencies
+packages/
+*.nupkg
+project.lock.json
+
+# Ignore logs and generated files
+*.log
+*.tlog
+*.cache
+*.pdb
+
+# Ignore publish outputs
+publish/
+
+# Ignore IDE-specific settings
+.vscode/
+.idea/
