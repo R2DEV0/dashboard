@@ -6,7 +6,7 @@ namespace dash.Entities
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-
-        // add list of permission ids for permission tree
+        public ICollection<UserRole> UserRoles { get; set; }
+        public ICollection<UserPermission> UserPermissions { get; set; }
     }
 }
