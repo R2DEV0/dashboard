@@ -2,7 +2,6 @@
 using dash.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,16 +18,21 @@ namespace dash.Controllers
             _context = appDbContext;
         }
 
+        #region GET: Index
         public IActionResult Index()
         {
             return View();
         }
+        #endregion
 
+        #region GET: Registration
         public IActionResult Registration()
         {
             return View();
         }
+        #endregion
 
+        #region POST: Registration
         [HttpPost]
         public IActionResult Registration(RegViewModel model)
         {
@@ -52,22 +56,27 @@ namespace dash.Controllers
 
                     ModelState.Clear();
                     ViewBag.Success = $"{account.FirstName} registered successfully!";
+                    return RedirectToAction("Registration");
                 }
                 catch (DbUpdateException ex)
                 {
                     ModelState.AddModelError("", "This email has already been registered. Please login.");
                     return View(model);
                 }
-                return View();
             }
+            // form is not valid
             return View(model);
         }
+        #endregion
 
+        #region GET: Login
         public IActionResult Login()
         {
             return View();
         }
+        #endregion
 
+        #region POST: Login
         [HttpPost]
         public IActionResult Login(LoginViewModel model)
         {
@@ -101,12 +110,14 @@ namespace dash.Controllers
             ViewBag.error = "Username or Password is incorrect";
             return View(model);
         }
+        #endregion
 
+        #region POST: Logout
         public IActionResult Logout()
         {
             HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login");
         }
-
+        #endregion
     }
 }

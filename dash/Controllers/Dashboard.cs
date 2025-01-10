@@ -13,12 +13,13 @@ namespace dash.Controllers
             _context = appDbContext;
         }
 
+        #region GET: Index
         [Authorize]
         public IActionResult Index()
         {
             ViewBag.Name = HttpContext.User.Identity.Name;
             return View();
         }
-
+        #endregion
     }
 }
