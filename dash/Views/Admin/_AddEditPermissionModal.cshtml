@@ -1,14 +1,14 @@
 ﻿@model dash.Entities.Permission
 
-<form asp-action="AddPermission" method="post">
+<form asp-action="AddEditPermission" method="post">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div class="text-danger" id="js-error"></div>
+    <input type="hidden" asp-for="Id" />
     <div class="form-group">
         <label asp-for="Name" class="control-label"></label>
         <input asp-for="Name" class="form-control" />
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
-    <div class="form-group">
-        <input type="submit" value="Submit" class="btn btn-primary mt-2" />
+    <div class="form-group mt-3">
+        <input type="submit" value="Save" class="btn btn-primary" />
     </div>
 </form>

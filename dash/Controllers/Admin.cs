@@ -42,40 +42,63 @@ namespace dash.Controllers
         }
         #endregion
 
-        #region GET: AddPermission
-        public IActionResult AddPermission()
+        #region GET: AddEditPermission
+        public IActionResult AddEditPermission(int? id)
         {
-            return PartialView("_AddPermission");
+            Permission permission = null;
+            if (id.HasValue)
+            {
+                permission = _context.Permissions.FirstOrDefault(p => p.Id == id.Value);
+                if (permission == null)
+                {
+                    return NotFound();
+                }
+            }
+            return PartialView("_AddEditPermissionModal", permission ?? new Permission());
         }
         #endregion
 
-        #region POST: AddPermission
+        #region POST: AddEditPermission
         [HttpPost]
-        public IActionResult AddPermission(AddPermissionModel model)
+        public IActionResult AddEditPermission(Permission model)
         {
             if (ModelState.IsValid)
             {
-                Permission permission = new Permission();
-                permission.Name = model.Name;
-
                 try
                 {
-                    // Save new user to the database
-                    _context.Permissions.Add(permission);
+                    if (model.Id == 0) // Add
+                    {
+                        _context.Permissions.Add(model);
+                        ViewBag.Success = $"{model.Name} created successfully!";
+                    }
+                    else // Edit
+                    {
+                        _context.Permissions.Update(model);
+                        ViewBag.Success = $"{model.Name} updated successfully!";
+                    }
                     _context.SaveChanges();
-
-                    ModelState.Clear();
-                    ViewBag.Success = $"{permission.Name} created successfully!";
                     return RedirectToAction("Permissions");
                 }
                 catch (DbUpdateException ex)
                 {
-                    ModelState.AddModelError("", $"An error occurred while saving the permission: {ex.Message}");
-                    return View(model);
+                    ModelState.AddModelError("", $"An error occurred: {ex.Message}");
                 }
             }
-            // form is not valid
-            return View(model);
+            return PartialView("_AddPermissionModal", model);
+        }
+        #endregion
+
+        #region POST: RemovePermission
+        [HttpPost]
+        public IActionResult RemovePermission(int id)
+        {
+            var permission = _context.Permissions.FirstOrDefault(p => p.Id == id);
+            if (permission != null)
+            {
+                _context.Permissions.Remove(permission);
+                _context.SaveChanges();
+            }
+            return Ok(); // Return a success response
         }
         #endregion
     }

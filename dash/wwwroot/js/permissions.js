@@ -1,29 +1,40 @@
-﻿$(document).ready(function () {
-    $("#addPermissionBtn").on("click", function () {
-        $.get("/Admin/AddPermission", function (data) {
-            $("#modalContent").html(data);
-            $("#addPermissionModal").modal("show");
+﻿// Ensure the script runs after the DOM is fully loaded
+document.addEventListener("DOMContentLoaded", function () {
+    // Open the modal for adding a permission
+    document.getElementById("addPermissionBtn").addEventListener("click", function () {
+        fetch("/Admin/AddEditPermission")
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById("modalContent").innerHTML = html;
+                const modal = new bootstrap.Modal(document.getElementById("addEditPermissionModal"));
+                modal.show();
+            });
+    });
+
+    // Open the modal for editing a permission
+    document.querySelectorAll(".editPermissionBtn").forEach(button => {
+        button.addEventListener("click", function () {
+            const permissionId = this.getAttribute("data-id");
+            fetch(`/Admin/AddEditPermission/${permissionId}`)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById("modalContent").innerHTML = html;
+                    const modal = new bootstrap.Modal(document.getElementById("addEditPermissionModal"));
+                    modal.show();
+                });
         });
     });
 
-    // Handle form submission
-    $(document).on("submit", "form", function (e) {
-        e.preventDefault();
-        const form = $(this);
-
-        $.ajax({
-            type: form.attr("method"),
-            url: form.attr("action"),
-            data: form.serialize(),
-            success: function () {
-                // Close the modal and reload the permissions table
-                $("#addPermissionModal").modal("hide");
-                location.reload();
-            },
-            error: function (xhr) {
-                // Display validation errors inside the modal
-                //$("#modalContent").html(xhr.responseText);
-                $("#js-error").html("Something went wrong.");
+    // Remove a permission
+    document.querySelectorAll(".removePermissionBtn").forEach(button => {
+        button.addEventListener("click", function () {
+            const permissionId = this.getAttribute("data-id");
+            if (confirm("Are you sure you want to delete this permission?")) {
+                fetch(`/Admin/RemovePermission/${permissionId}`, {
+                    method: "POST"
+                }).then(() => {
+                    location.reload(); // Reload the page after deletion
+                });
             }
         });
     });

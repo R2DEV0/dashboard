@@ -15,6 +15,7 @@
         <tr>
             <th>ID</th>
             <th>Name</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -23,21 +24,25 @@
             <tr>
                 <td>@permission.Id</td>
                 <td>@permission.Name</td>
+                <td>
+                    <button class="btn btn-warning editPermissionBtn" data-id="@permission.Id">Edit</button>
+                    <button class="btn btn-danger removePermissionBtn" data-id="@permission.Id">Remove</button>
+                </td>
             </tr>
         }
     </tbody>
 </table>
 
 <!-- Modal -->
-<div class="modal fade" id="addPermissionModal" tabindex="-1" aria-labelledby="addPermissionModalLabel" aria-hidden="true">
+<div class="modal fade" id="addEditPermissionModal" tabindex="-1" aria-labelledby="addEditPermissionModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addPermissionModalLabel">Add New Permission</h5>
+                <h5 class="modal-title" id="addEditPermissionModalLabel">Add/Edit Permission</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="modalContent">
-                <!-- form loaded via AJAX -->
+                <!-- The form will be loaded here via AJAX -->
             </div>
         </div>
     </div>
