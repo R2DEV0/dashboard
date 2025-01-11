@@ -42,6 +42,13 @@ namespace dash.Controllers
         }
         #endregion
 
+        #region GET: AddPermission
+        public IActionResult AddPermission()
+        {
+            return PartialView("_AddPermission");
+        }
+        #endregion
+
         #region POST: AddPermission
         [HttpPost]
         public IActionResult AddPermission(AddPermissionModel model)

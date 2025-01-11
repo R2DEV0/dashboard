@@ -6,6 +6,10 @@
 
 <h1>Permissions</h1>
 
+<div>
+    <button class="btn btn-primary" id="addPermissionBtn">Add New Permission</button>
+</div>
+
 <table class="table">
     <thead>
         <tr>
@@ -23,3 +27,22 @@
         }
     </tbody>
 </table>
+
+<!-- Modal -->
+<div class="modal fade" id="addPermissionModal" tabindex="-1" aria-labelledby="addPermissionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addPermissionModalLabel">Add New Permission</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalContent">
+                <!-- form loaded via AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="/js/permissions.js"></script>
+}
