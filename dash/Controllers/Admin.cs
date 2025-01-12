@@ -17,7 +17,14 @@ namespace dash.Controllers
         #region GET: Index
         public IActionResult Index()
         {
-            return View();
+            var model = new AdminViewModel
+            {
+                TotalPermissions = _context.Permissions.Count(),
+                TotalUsers = _context.UserAccounts.Count(),
+                TotalRoles = _context.Roles.Count()
+            };
+
+            return View(model);
         }
         #endregion
 
