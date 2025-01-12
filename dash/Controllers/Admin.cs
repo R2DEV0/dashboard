@@ -117,30 +117,47 @@ namespace dash.Controllers
         #endregion
 
         #region GET: AddEditUser
-        public IActionResult AddEditUser(string? id)
+        public async Task<IActionResult> AddEditUser(string? id)
         {
-            AddUserModel model = null;
+            AddUserModel model = new AddUserModel();
 
             if (id != null)
             {
-                var user = _context.UserAccounts.FirstOrDefault(u => u.Id == id);
+                var user = await _context.UserAccounts
+                    .Include(u => u.UserRoles)
+                        .ThenInclude(ur => ur.Role)
+                    .Include(u => u.UserPermissions)
+                        .ThenInclude(up => up.Permission)
+                    .FirstOrDefaultAsync(u => u.Id == id);
+
                 if (user == null)
                 {
                     return NotFound();
                 }
 
-                model = new AddUserModel
-                {
-                    Id = user.Id,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Email = user.Email,
-                    UserName = user.UserName
-                };
+                // Populate the model with user data
+                model.Id = user.Id;
+                model.FirstName = user.FirstName;
+                model.LastName = user.LastName;
+                model.Email = user.Email;
+                model.UserName = user.UserName;
+
+                // Populate selected roles and permissions
+                model.SelectedRoleIds = user.UserRoles.Select(ur => ur.RoleId).ToList();
+                model.SelectedPermissionIds = user.UserPermissions.Select(up => up.PermissionId).ToList();
+
+                // Get all roles and permissions to populate the dropdowns
+                model.AllRoles = await _context.Roles.ToListAsync();
+                model.AllPermissions = await _context.Permissions.ToListAsync();
+
+                // Populate current user roles and permissions (optional for debugging purposes)
+                model.CurrentUserRoles = user.UserRoles;
+                model.CurrentUserPermissions = user.UserPermissions;
             }
             else
             {
-                model = new AddUserModel();
+                model.AllRoles = await _context.Roles.ToListAsync();
+                model.AllPermissions = await _context.Permissions.ToListAsync();
             }
 
             return PartialView("_AddEditUserModal", model);
@@ -155,45 +172,100 @@ namespace dash.Controllers
             {
                 try
                 {
-                    if (model.Id == "" || model.Id == null) // Add
-                    {
-                        var newUser = new UserAccount();
-                        newUser.FirstName = model.FirstName;
-                        newUser.LastName = model.LastName;
-                        newUser.Email = model.Email;
-                        newUser.UserName = model.UserName;
+                    UserAccount user = null;
 
-                        _context.UserAccounts.Add(newUser);
-                        ViewBag.Success = $"{newUser.FirstName}'s account created successfully!";
+                    if (model.Id == null || model.Id == "") // New user
+                    {
+                        user = new UserAccount
+                        {
+                            FirstName = model.FirstName,
+                            LastName = model.LastName,
+                            Email = model.Email,
+                            UserName = model.UserName
+                        };
+
+                        _context.UserAccounts.Add(user);
+                        await _context.SaveChangesAsync(); // Save first to get user ID
                     }
-                    else // Edit
+                    else // Update existing user
                     {
-                        var user = await _context.UserAccounts.FirstOrDefaultAsync(u => u.Id == model.Id);
-                        if (user != null) 
-                        { 
-                            user.FirstName = model.FirstName;
-                            user.LastName = model.LastName;
-                            user.Email = model.Email;
-                            user.UserName = model.UserName;
+                        user = await _context.UserAccounts
+                                    .Include(u => u.UserRoles)
+                                    .Include(u => u.UserPermissions)
+                                    .FirstOrDefaultAsync(u => u.Id == model.Id);
 
-                            _context.UserAccounts.Update(user);
-                            ViewBag.Success = $"{user.FirstName}'s account updated successfully!";
+                        if (user == null)
+                        {
+                            return NotFound();
+                        }
+
+                        user.FirstName = model.FirstName;
+                        user.LastName = model.LastName;
+                        user.Email = model.Email;
+                        user.UserName = model.UserName;
+
+                        _context.UserAccounts.Update(user);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    // Remove old roles and permissions
+                    _context.UserRoles.RemoveRange(user.UserRoles);
+                    _context.UserPermissions.RemoveRange(user.UserPermissions);
+
+                    // Add new roles
+                    if (model.SelectedRoleIds != null)
+                    {
+                        foreach (var roleId in model.SelectedRoleIds)
+                        {
+                            var userRole = new UserRole
+                            {
+                                UserId = user.Id,
+                                RoleId = roleId
+                            };
+                            _context.UserRoles.Add(userRole);
                         }
                     }
-                    _context.SaveChanges();
+
+                    // Add new permissions
+                    if (model.SelectedPermissionIds != null)
+                    {
+                        foreach (var permissionId in model.SelectedPermissionIds)
+                        {
+                            var userPermission = new UserPermission
+                            {
+                                UserId = user.Id,
+                                PermissionId = permissionId
+                            };
+                            _context.UserPermissions.Add(userPermission);
+                        }
+                    }
+
+                    await _context.SaveChangesAsync();
+                    ViewBag.Success = $"{user.FirstName}'s account saved successfully!";
                     return RedirectToAction("Users");
                 }
-                catch (DbUpdateException ex)
+                catch (Exception ex)
                 {
                     ModelState.AddModelError("", $"An error occurred: {ex.Message}");
                 }
-            }
-            else
+            } else
             {
-                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                model.AllRoles = await _context.Roles.ToListAsync();
+                model.AllPermissions = await _context.Permissions.ToListAsync();
+
+                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    // You can log the error or inspect it
+                    Console.WriteLine(error.ErrorMessage); // Output to console for debugging
+                }
+
+                return PartialView("_AddEditUserModal", model);  // Return the view with validation errors
             }
+
+            // Return to the view with the model
             return PartialView("_AddEditUserModal", model);
         }
+
         #endregion
 
         #region POST: RemoveUser

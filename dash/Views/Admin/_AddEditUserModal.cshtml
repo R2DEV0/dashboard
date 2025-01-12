@@ -3,26 +3,43 @@
 <form asp-action="AddEditUser" method="post">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <input type="hidden" asp-for="Id" />
+
     <div class="form-group">
         <label asp-for="FirstName" class="control-label"></label>
         <input asp-for="FirstName" class="form-control" />
         <span asp-validation-for="FirstName" class="text-danger"></span>
     </div>
+
     <div class="form-group">
         <label asp-for="LastName" class="control-label"></label>
         <input asp-for="LastName" class="form-control" />
         <span asp-validation-for="LastName" class="text-danger"></span>
     </div>
+
     <div class="form-group">
         <label asp-for="Email" class="control-label"></label>
         <input asp-for="Email" class="form-control" />
         <span asp-validation-for="Email" class="text-danger"></span>
     </div>
+
     <div class="form-group">
         <label asp-for="UserName" class="control-label"></label>
         <input asp-for="UserName" class="form-control" />
         <span asp-validation-for="UserName" class="text-danger"></span>
     </div>
+
+    <!-- Roles -->
+    <div class="my-2">
+        <label>Roles</label>
+        <select class="form-control" multiple asp-for="SelectedRoleIds" asp-items="@(new SelectList(Model.AllRoles, "Id", "Name", Model.SelectedRoleIds))"></select>
+    </div>
+
+    <!-- Permissions -->
+    <div>
+        <label>Permissions</label>
+        <select multiple class="form-control" asp-for="SelectedPermissionIds" asp-items="@(new SelectList(Model.AllPermissions, "Id", "Name", Model.SelectedPermissionIds))"></select>
+    </div>
+
     <div class="form-group mt-3">
         <input type="submit" value="Save" class="btn btn-primary" />
     </div>
