@@ -1,7 +1,84 @@
 ﻿@{
-    ViewData["Title"] = "Admin";
+    ViewData["Title"] = "Admin Dashboard";
 }
 
-<a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Permissions">View/Edit Permissions</a>
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <h1 class="display-6">Admin</h1>
+            <p class="text-muted">Admin dashboard for quick insights, management tools, and site settings</p>
+        </div>
+    </div>
 
-<a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Users">View/Edit Users</a>
+    <!-- Management Links -->
+    <div class="row">
+        <div class="col-lg-3 mb-4">
+            <a href="@Url.Action("Users", "Admin")" class="btn btn-primary btn-lg w-100 shadow-sm">Users</a>
+        </div>
+        <div class="col-lg-3 mb-4">
+            <a href="@Url.Action("Permissions", "Admin")" class="btn btn-success btn-lg w-100 shadow-sm">Permissions</a>
+        </div>
+        <div class="col-lg-3 mb-4">
+            <a href="@Url.Action("Roles", "Admin")" class="btn btn-warning btn-lg w-100 shadow-sm">Roles</a>
+        </div>
+        <div class="col-lg-3 mb-4">
+            <a href="@Url.Action("Settings", "Admin")" class="btn btn-secondary btn-lg w-100 shadow-sm">Settings</a>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card text-center shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Total Users</h5>
+                    <p class="card-text display-4">1,234</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card text-center shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Roles</h5>
+                    <p class="card-text display-4">12</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card text-center shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Permissions</h5>
+                    <p class="card-text display-4">56</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Charts and Graphs -->
+    <div class="row mb-4">
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    Site Activity
+                </div>
+                <div class="card-body">
+                    <canvas id="siteActivityChart" style="height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    User Growth
+                </div>
+                <div class="card-body">
+                    <canvas id="userGrowthChart" style="height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="/js/admin.js"></script>
+}

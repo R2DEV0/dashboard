@@ -119,7 +119,7 @@ namespace dash.Controllers
         #region GET: AddEditUser
         public async Task<IActionResult> AddEditUser(string? id)
         {
-            AddUserModel model = new AddUserModel();
+            AddEditUserModel model = new AddEditUserModel();
 
             if (id != null)
             {
@@ -166,7 +166,7 @@ namespace dash.Controllers
 
         #region POST: AddEditUser
         [HttpPost]
-        public async Task<IActionResult> AddEditUser(AddUserModel model)
+        public async Task<IActionResult> AddEditUser(AddEditUserModel model)
         {
             if (ModelState.IsValid)
             {
@@ -276,6 +276,129 @@ namespace dash.Controllers
             if (user != null)
             {
                 _context.UserAccounts.Remove(user);
+                _context.SaveChanges();
+            }
+            return Ok(); // Return a success response
+        }
+        #endregion
+
+        #region GET: Roles
+        public async Task<IActionResult> Roles()
+        {
+            var roles = await _context.Roles.ToListAsync();
+
+            var model = new RolesViewModel
+            {
+                Roles = roles
+            };
+
+            return View(model);
+        }
+        #endregion
+
+        #region GET: AddEditRole
+        public async Task<IActionResult> AddEditRole(int? id)
+        {
+            var model = new AddEditRoleModel
+            {
+                AllPermissions = await _context.Permissions.ToListAsync(),
+                CurrentRolePermissions = new List<RolePermission>()
+            };
+
+            if (id.HasValue)
+            {
+                var role = await _context.Roles
+                    .Include(r => r.RolePermissions)
+                    .ThenInclude(rp => rp.Permission)
+                    .FirstOrDefaultAsync(r => r.Id == id.Value);
+
+                if (role == null)
+                {
+                    return NotFound();
+                }
+
+                model.Id = role.Id;
+                model.Name = role.Name;
+                model.SelectedPermissionIds = role.RolePermissions.Select(rp => rp.PermissionId).ToList();
+                model.CurrentRolePermissions = role.RolePermissions;
+            }
+
+            return PartialView("_AddEditRoleModal", model);
+        }
+        #endregion
+
+        #region POST: AddEditRole
+        [HttpPost]
+        public async Task<IActionResult> AddEditRole(AddEditRoleModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.AllPermissions = await _context.Permissions.ToListAsync(); // Repopulate permissions
+                return PartialView("_AddEditRoleModal", model);
+            }
+
+            try
+            {
+                Role role;
+
+                if (!model.Id.HasValue) // Add
+                {
+                    role = new Role
+                    {
+                        Name = model.Name
+                    };
+                    _context.Roles.Add(role);
+                }
+                else // Edit
+                {
+                    role = await _context.Roles
+                        .Include(r => r.RolePermissions)
+                        .FirstOrDefaultAsync(r => r.Id == model.Id);
+
+                    if (role == null)
+                    {
+                        return NotFound();
+                    }
+
+                    role.Name = model.Name;
+
+                    // Remove existing permissions
+                    _context.RolePermissions.RemoveRange(role.RolePermissions);
+
+                    // Update permissions
+                    if (model.SelectedPermissionIds != null)
+                    {
+                        role.RolePermissions = model.SelectedPermissionIds
+                            .Select(pid => new RolePermission
+                            {
+                                RoleId = role.Id,
+                                PermissionId = pid
+                            }).ToList();
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+                ViewBag.Success = $"Role '{model.Name}' saved successfully!";
+                return RedirectToAction("Roles");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+            }
+
+            model.AllPermissions = await _context.Permissions.ToListAsync(); // Repopulate permissions
+            return PartialView("_AddEditRoleModal", model);
+        }
+        #endregion
+
+        #region POST: RemoveRole
+        [HttpPost]
+        public IActionResult RemoveRole(int id)
+        {
+            var role = _context.Roles.FirstOrDefault(p => p.Id == id);
+            if (role != null)
+            {
+                _context.Roles.Remove(role);
                 _context.SaveChanges();
             }
             return Ok(); // Return a success response

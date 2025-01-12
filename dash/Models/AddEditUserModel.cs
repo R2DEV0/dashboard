@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace dash.Models
 {
-    public class AddUserModel
+    public class AddEditUserModel
     {
         public string? Id { get; set; }
         public string FirstName { get; set; }

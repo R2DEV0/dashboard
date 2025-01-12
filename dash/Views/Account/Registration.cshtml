@@ -12,6 +12,7 @@
                 <h1 class="text-center">Register Here</h1>
                 <hr />
                 <form asp-action="Registration">
+                    @Html.AntiForgeryToken()
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     @if (ViewBag.Success != null)
                     {

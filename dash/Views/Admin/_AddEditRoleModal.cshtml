@@ -1,14 +1,22 @@
-﻿@model dash.Entities.Permission
+﻿@model dash.Models.AddEditRoleModel
 
-<form asp-action="AddEditPermission" method="post">
+<form asp-action="AddEditRole" method="post">
     @Html.AntiForgeryToken()
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <input type="hidden" asp-for="Id" />
+
     <div class="form-group">
         <label asp-for="Name" class="control-label"></label>
         <input asp-for="Name" class="form-control" />
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
+
+    <!-- Permissions -->
+    <div>
+        <label>Permissions</label>
+        <select multiple class="form-control" asp-for="SelectedPermissionIds" asp-items="@(new SelectList(Model.AllPermissions, "Id", "Name", Model.SelectedPermissionIds))"></select>
+    </div>
+
     <div class="form-group mt-3">
         <input type="submit" value="Save" class="btn btn-primary" />
     </div>
