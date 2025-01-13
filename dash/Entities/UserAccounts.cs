@@ -20,5 +20,11 @@ namespace dash.Entities
         public ICollection<UserRole>? UserRoles { get; set; }
         
         public ICollection<UserPermission>? UserPermissions { get; set; }
+
+        [DataType(DataType.DateTime)]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        [DataType(DataType.DateTime)]
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
 }

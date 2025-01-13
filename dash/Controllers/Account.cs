@@ -108,7 +108,7 @@ namespace dash.Controllers
                         {
                             new Claim(ClaimTypes.Name, user.FirstName),
                             new Claim("Email", user.Email),
-                            new Claim(ClaimTypes.Role, "User")
+                            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
                         };
 
                         // Add roles to claims
@@ -142,5 +142,26 @@ namespace dash.Controllers
             return RedirectToAction("Login");
         }
         #endregion
+
+        #region GET: Manage
+        public IActionResult Manage(string id)
+        {
+            var user = _context.UserAccounts.FirstOrDefault(u => u.Id == id);
+            if (user != null)
+            {
+                var model = new ManageViewModel
+                {
+                    User = user
+                };
+
+                return View("Manage", model);
+            }
+            else
+            {   // User not found, show error, log them out, etc.
+                return RedirectToAction("Login");
+            }
+        }
+        #endregion
+    
     }
 }

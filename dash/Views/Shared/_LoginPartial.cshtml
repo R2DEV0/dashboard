@@ -1,18 +1,25 @@
-﻿@if (Context.User.Identity?.IsAuthenticated == true)
+﻿@using System.Security.Claims
+
+@if (Context.User.Identity?.IsAuthenticated == true)
 {
     <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm">
         <ul class="nav navbar-nav">
             <li class="d-none d-sm-inline">
-                <span class="btn btn-link navbar-link text-dark" style="cursor: default; text-decoration: none; padding-left: 0">
+                <a class="btn btn-link navbar-link text-dark"
+                   style="cursor: pointer; text-decoration: none; padding-left: 0"
+                   asp-area=""
+                   asp-controller="Account"
+                   asp-action="Manage"
+                   asp-route-id="@Context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value">
                     Welcome @Context.User.Identity.Name
-                </span>
+                </a>
             </li>
             <li>
                 <button type="submit" class="btn btn-link navbar-btn navbar-link text-dark" style="text-decoration: none; padding-left: 0">Logout</button>
             </li>
         </ul>
     </form>
-} 
+}
 else
 {
     <ul class="nav navbar-nav">

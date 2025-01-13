@@ -14,5 +14,11 @@ namespace dash.Entities
 
         public UserAccount User { get; set; }
         public Role Role { get; set; }
+
+        [DataType(DataType.DateTime)]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        [DataType(DataType.DateTime)]
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
 }
