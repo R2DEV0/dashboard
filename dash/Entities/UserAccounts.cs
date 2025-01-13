@@ -10,6 +10,12 @@ namespace dash.Entities
 
         [StringLength(30)]
         public string LastName { get; set; }
+
+        public bool TrialCompleted { get; set; }
+
+        public DateTime TrialStart { get; set; }
+
+        public int TrialDaysLength { get; set; } = 7;
         
         public ICollection<UserRole>? UserRoles { get; set; }
         
