@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using System.Security.Claims;
 
 namespace dash.Controllers
@@ -162,6 +161,68 @@ namespace dash.Controllers
             }
         }
         #endregion
-    
+
+        #region GET: EditAccount
+        public IActionResult EditAccount(string id)
+        {
+            EditAccountModel model = new EditAccountModel();
+
+            if (id != null)
+            {
+                var user = _context.UserAccounts.FirstOrDefault(u => u.Id == id);
+
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                model.Id = user.Id;
+                model.FirstName = user.FirstName;
+                model.LastName = user.LastName;
+                model.Email = user.Email;
+                model.UserName = user.UserName;
+            }
+
+            return PartialView("_EditAccountModal", model);
+        }
+        #endregion
+
+        #region POST: AddEditAccount
+        [HttpPost]
+        public IActionResult EditAccount(EditAccountModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    UserAccount user = null;
+
+                    user = _context.UserAccounts.FirstOrDefault(u => u.Id == model.Id);
+
+                    if (user == null)
+                    {
+                        return NotFound();
+                    }
+
+                    user.FirstName = model.FirstName;
+                    user.LastName = model.LastName;
+                    user.Email = model.Email;
+                    user.UserName = model.UserName;
+
+                    _context.UserAccounts.Update(user);
+                    _context.SaveChanges();
+
+                    TempData["Success"] = "Updates Saved!";
+                    return RedirectToAction("Manage", new { id = user.Id });
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                }
+            }
+
+            return RedirectToAction("Index", "Home");
+        }
+        #endregion
     }
 }

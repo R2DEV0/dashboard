@@ -5,24 +5,28 @@
 }
 
 <div class="container my-5">
-    <h1 class="display-5 text-center">Welcome Back, @Model.User.FirstName!</h1>
-    <p class="text-muted text-center">Manage your account details below.</p>
+    <h1 class="display-5">Welcome Back, @Model.User.FirstName!</h1>
+    <p class="text-muted">Manage your account details below.</p>
 
-    <div class="row w-100 mt-4">
+    <div class="row w-100">
         <div class="col text-end">
-            <a href="@Url.Action("EditUser", "Account", new { id = Model.User.Id })" class="btn btn-success">
-                Edit Account
-            </a>
+            <a class="btn btn-success editAccountBtn" data-id="@Model.User.Id">Edit Account</a>
             <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
                 <button type="submit" class="btn btn-secondary">Logout</button>
             </form>
         </div>
     </div>
 
-
     <div class="card shadow-lg mt-4">
+        @if (TempData["Success"] != null)
+        {
+            <p class="text-success position-absolute" style="top: 10px; right: 20px;">
+                @TempData["Success"]
+            </p>
+
+        }
         <div class="card-body">
-            <h3 class="card-title text-center">Account Details</h3>
+            <h3 class="card-title">Account Details</h3>
             <hr />
             <dl class="row">
                 <dt class="col-sm-4">First Name:</dt>
@@ -52,3 +56,22 @@
         </div>
     </div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="editAccountModal" tabindex="-1" aria-labelledby="editAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editAccountModalLabel">Add/Edit User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalContent">
+                <!-- The form will be loaded here via AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="/js/manage.js"></script>
+}

@@ -260,19 +260,12 @@ namespace dash.Controllers
                 model.AllRoles = await _context.Roles.ToListAsync();
                 model.AllPermissions = await _context.Permissions.ToListAsync();
 
-                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
-                {
-                    // You can log the error or inspect it
-                    Console.WriteLine(error.ErrorMessage); // Output to console for debugging
-                }
-
-                return PartialView("_AddEditUserModal", model);  // Return the view with validation errors
+                return PartialView("_AddEditUserModal", model);
             }
 
             // Return to the view with the model
             return PartialView("_AddEditUserModal", model);
         }
-
         #endregion
 
         #region POST: RemoveUser

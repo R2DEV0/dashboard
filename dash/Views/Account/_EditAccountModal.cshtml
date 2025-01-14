@@ -1,6 +1,6 @@
-﻿@model dash.Models.AddEditUserModel
+﻿@model dash.Models.EditAccountModel
 
-<form asp-action="AddEditUser" method="post" class="form">
+<form asp-action="EditAccount" method="post" class="form">
     @Html.AntiForgeryToken()
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <input type="hidden" asp-for="Id" />
@@ -31,18 +31,6 @@
             <input asp-for="UserName" class="form-control" />
             <span asp-validation-for="UserName" class="text-danger"></span>
         </div>
-    </div>
-
-    <!-- Roles -->
-    <div class="my-2">
-        <label>Roles</label>
-        <select class="form-control" multiple asp-for="SelectedRoleIds" asp-items="@(new SelectList(Model.AllRoles, "Id", "Name", Model.SelectedRoleIds))"></select>
-    </div>
-
-    <!-- Permissions -->
-    <div>
-        <label>Permissions</label>
-        <select multiple class="form-control" asp-for="SelectedPermissionIds" asp-items="@(new SelectList(Model.AllPermissions, "Id", "Name", Model.SelectedPermissionIds))"></select>
     </div>
 
     <div class="form-group mt-3">
