@@ -34,3 +34,15 @@ body {
     border: none !important;
     box-shadow: none !important;
 }
+
+.user-icon {
+    width: 35px;
+    height: 35px;
+    object-fit: cover;
+    border: 1px solid lightgray;
+    transition: .1s;
+}
+
+.user-icon:hover{
+    box-shadow: 0px 0px 8px gray;
+}

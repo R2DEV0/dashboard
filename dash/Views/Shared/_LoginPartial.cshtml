@@ -3,7 +3,7 @@
 @if (Context.User.Identity?.IsAuthenticated == true)
 {
     <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm">
-        <ul class="nav navbar-nav">
+        <ul class="nav navbar-nav d-flex align-items-center">
             <li class="d-none d-sm-inline">
                 <a class="btn btn-link navbar-link text-dark"
                    style="cursor: pointer; text-decoration: none; padding-left: 0"
@@ -11,7 +11,8 @@
                    asp-controller="Account"
                    asp-action="Manage"
                    asp-route-id="@Context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value">
-                    Welcome @Context.User.Identity.Name
+                    <img src="/assets/user.svg" alt="User Icon"
+                         class="rounded-circle p-1 user-icon" />
                 </a>
             </li>
             <li>
